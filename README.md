@@ -16,20 +16,74 @@
 
 ## 架构
 
+```mermaid
+graph TB
+    subgraph Orchestrator["Orchestrator 编排层"]
+        direction LR
+        Task["Task"]
+        Channel["Channel"]
+        Builder["AgentBuilder"]
+        DepGraph["Dep Graph"]
+    end
+
+    subgraph AgentCore["Agent Core 核心层"]
+        direction LR
+        Agent["Agent"]
+        Session["Session"]
+        ReActLoop["ReActLoop"]
+        Compressor["Compressor"]
+        Options["Options"]
+    end
+
+    subgraph ToolSystem["Tool System 工具层"]
+        direction LR
+        Registry["Registry"]
+        Executor["Executor"]
+        Adapter["Adapter"]
+        Builtins["Builtins"]
+    end
+
+    subgraph MCP["MCP 扩展层"]
+        direction LR
+        Client["Client"]
+        Bridge["Bridge"]
+        Config["Config"]
+    end
+
+    Orchestrator --> AgentCore
+    AgentCore --> ToolSystem
+    ToolSystem --> MCP
+    AgentCore --> MCP
+
+    BambooClient["BambooClient<br/>(BM-SDK)"]
+    AgentCore -.-> BambooClient
 ```
-┌─────────────────────────────────────────────┐
-│              Orchestrator (编排层)            │
-│   Task / Channel / AgentBuilder / Dep Graph  │
-├─────────────────────────────────────────────┤
-│               Agent Core (核心层)            │
-│   Agent / Session / ReActLoop / Compressor   │
-├─────────────────────────────────────────────┤
-│             Tool System (工具层)             │
-│   Registry / Executor / Adapter / Builtins   │
-├─────────────────────────────────────────────┤
-│              MCP (扩展层)                     │
-│        Client / Bridge / Config              │
-└─────────────────────────────────────────────┘
+
+**核心数据流：**
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Agent
+    participant Loop as ReActLoop
+    participant Client as BambooClient
+    participant Executor as ToolExecutor
+
+    User->>Agent: Run(input)
+    Agent->>Loop: Execute(input)
+    loop 每次迭代
+        Loop->>Loop: 检查上下文长度
+        Loop->>Client: Chat() 流式请求
+        Client-->>Loop: StreamEvents
+        alt 返回 tool_use
+            Loop->>Executor: ExecuteAll() 并发执行
+            Executor-->>Loop: ToolResults
+            Loop->>Loop: 追加结果到 Session
+        else 返回 end_turn
+            Loop-->>Agent: AgentResult
+        end
+    end
+    Agent-->>User: 最终结果
 ```
 
 ## 快速开始
