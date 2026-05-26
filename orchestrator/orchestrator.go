@@ -9,20 +9,39 @@ import (
 	"github.com/bamboo-services/bamboo-agent/agent"
 )
 
-// Orchestrator manages multi-agent task execution with dependency resolution.
+// Orchestrator 管理多 Agent 任务执行，支持依赖解析。
+//
+// 提供以下核心功能：
+//   - Agent 注册与管理
+//   - 依赖关系解析
+//   - 并发与串行执行模式
+//
+// 内部使用读写锁保护 Agent 注册表，确保并发安全。
 type Orchestrator struct {
 	mu     sync.RWMutex
 	agents map[string]agent.Agent
 }
 
-// NewOrchestrator creates a new Orchestrator.
+// NewOrchestrator 创建一个新的 Orchestrator 实例。
+//
+// 返回：
+//   - *Orchestrator - 初始化后的 Orchestrator
 func NewOrchestrator() *Orchestrator {
 	return &Orchestrator{
 		agents: make(map[string]agent.Agent),
 	}
 }
 
-// RegisterAgent registers an agent with the given name.
+// RegisterAgent 向 Orchestrator 注册一个 Agent。
+//
+// 如果名称已存在则返回错误。
+//
+// 参数说明：
+//   - name - Agent 名称，作为唯一标识符
+//   - ag - Agent 实例
+//
+// 返回：
+//   - error - 注册失败时返回错误（如名称重复）
 func (o *Orchestrator) RegisterAgent(name string, ag agent.Agent) error {
 	o.mu.Lock()
 	defer o.mu.Unlock()
@@ -34,7 +53,16 @@ func (o *Orchestrator) RegisterAgent(name string, ag agent.Agent) error {
 	return nil
 }
 
-// resolveAgent finds the agent for a task: prefers task.Agent, falls back to registered agents.
+// resolveAgent 查找任务对应的 Agent。
+//
+// 优先使用任务自带的 Agent，如果不存在则从注册表中查找。
+//
+// 参数说明：
+//   - t - 任务实例
+//
+// 返回：
+//   - agent.Agent - 找到的 Agent
+//   - error - 未找到 Agent 时返回错误
 func (o *Orchestrator) resolveAgent(t *Task) (agent.Agent, error) {
 	if t.Agent != nil {
 		return t.Agent, nil
@@ -48,8 +76,18 @@ func (o *Orchestrator) resolveAgent(t *Task) (agent.Agent, error) {
 	return ag, nil
 }
 
-// Execute runs tasks respecting dependency ordering.
-// Tasks without dependencies run in parallel. Tasks with dependencies wait.
+// Execute 执行任务列表，自动处理依赖关系。
+//
+// 无依赖的任务会并行执行，有依赖的任务会等待依赖完成。
+// 依赖失败的任务会自动标记为失败，不再执行。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - tasks - 任务列表
+//
+// 返回：
+//   - []Task - 执行后的任务列表（包含执行状态和结果）
+//   - error - 上下文取消时返回错误
 func (o *Orchestrator) Execute(ctx context.Context, tasks []Task) ([]Task, error) {
 	// Build task map for dependency lookups
 	taskMap := make(map[string]*Task)
@@ -167,7 +205,18 @@ func (o *Orchestrator) Execute(ctx context.Context, tasks []Task) ([]Task, error
 	return tasks, nil
 }
 
-// ExecuteSequential runs all tasks one after another.
+// ExecuteSequential 顺序执行所有任务。
+//
+// 任务会按照列表顺序一个接一个执行，忽略依赖关系。
+// 即使某个任务失败，后续任务仍会继续执行。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - tasks - 任务列表
+//
+// 返回：
+//   - []Task - 执行后的任务列表（包含执行状态和结果）
+//   - error - 上下文取消时返回错误
 func (o *Orchestrator) ExecuteSequential(ctx context.Context, tasks []Task) ([]Task, error) {
 	for i := range tasks {
 		tasks[i].Status = TaskRunning
@@ -198,7 +247,17 @@ func (o *Orchestrator) ExecuteSequential(ctx context.Context, tasks []Task) ([]T
 	return tasks, nil
 }
 
-// ExecuteParallel runs all tasks concurrently.
+// ExecuteParallel 并发执行所有任务。
+//
+// 所有任务同时启动，忽略依赖关系。
+// 即使某个任务失败，其他任务仍会继续执行。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - tasks - 任务列表
+//
+// 返回：
+//   - []Task - 执行后的任务列表（包含执行状态和结果）
 func (o *Orchestrator) ExecuteParallel(ctx context.Context, tasks []Task) ([]Task, error) {
 	var wg sync.WaitGroup
 	var mu sync.Mutex

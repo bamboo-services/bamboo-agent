@@ -11,24 +11,30 @@ import (
 	"github.com/bamboo-services/bamboo-agent/tool"
 )
 
-// ShellTool executes shell commands.
+// ShellTool 执行 Shell 命令并返回结果。
+//
+// 支持 stdout 和 stderr 输出，以及超时控制。
+// 默认超时时间为 30 秒。
 type ShellTool struct{}
 
-// Info returns the tool metadata.
+// Info 返回工具的元数据信息。
+//
+// 返回：
+//   - tool.ToolInfo - 包含工具名称、描述和参数定义
 func (s *ShellTool) Info() tool.ToolInfo {
 	return tool.ToolInfo{
 		Name:        "shell",
-		Description: "Execute a shell command and return stdout and stderr",
+		Description: "执行 Shell 命令并返回 stdout 和 stderr",
 		Parameters: tool.InputSchema{
 			Type: "object",
 			Properties: map[string]tool.PropertyDef{
 				"command": {
 					Type:        "string",
-					Description: "The shell command to execute",
+					Description: "要执行的 Shell 命令",
 				},
 				"timeout": {
 					Type:        "number",
-					Description: "Timeout in seconds (default: 30)",
+					Description: "超时时间，单位秒（默认：30）",
 				},
 			},
 			Required: []string{"command"},
@@ -36,7 +42,18 @@ func (s *ShellTool) Info() tool.ToolInfo {
 	}
 }
 
-// Execute runs the shell command.
+// Execute 执行 Shell 命令并返回结果。
+//
+// 在指定的超时时间内执行命令，返回 stdout 和 stderr 的组合输出。
+// 如果命令超时或执行失败，返回错误信息。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - input - JSON 格式的参数，包含 command 和可选的 timeout
+//
+// 返回：
+//   - *tool.ToolResult - 执行结果，包含命令输出或错误信息
+//   - error - 参数解析错误
 func (s *ShellTool) Execute(ctx context.Context, input json.RawMessage) (*tool.ToolResult, error) {
 	var params struct {
 		Command string  `json:"command"`

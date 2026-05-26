@@ -18,6 +18,7 @@ func setupTestRegistry(tools ...Tool) *Registry {
 	return r
 }
 
+// TestExecutor_ConcurrentExecution 测试工具的并发执行。
 func TestExecutor_ConcurrentExecution(t *testing.T) {
 	var callCount int32
 	tool1 := newCustomExecuteTool("tool-a", func(ctx context.Context, input json.RawMessage) (*ToolResult, error) {
@@ -71,6 +72,7 @@ func TestExecutor_ConcurrentExecution(t *testing.T) {
 	}
 }
 
+// TestExecutor_SingleFailureDoesNotAffectOthers 测试单个工具失败不影响其他工具执行。
 func TestExecutor_SingleFailureDoesNotAffectOthers(t *testing.T) {
 	tool1 := newCustomExecuteTool("good-tool", func(ctx context.Context, input json.RawMessage) (*ToolResult, error) {
 		return &ToolResult{Content: "good-result", IsError: false}, nil
@@ -121,6 +123,7 @@ func TestExecutor_SingleFailureDoesNotAffectOthers(t *testing.T) {
 	}
 }
 
+// TestExecutor_ContextCancellation 测试 Context 取消时的执行行为。
 func TestExecutor_ContextCancellation(t *testing.T) {
 	// 创建一个会阻塞等待 context 取消的工具
 	tool := newCustomExecuteTool("slow-tool", func(ctx context.Context, input json.RawMessage) (*ToolResult, error) {
@@ -157,6 +160,7 @@ func TestExecutor_ContextCancellation(t *testing.T) {
 	}
 }
 
+// TestExecutor_MaxConcurrentLimitsParallelism 测试最大并发数限制功能。
 func TestExecutor_MaxConcurrentLimitsParallelism(t *testing.T) {
 	// 使用 maxConcurrent=2 来限制并发
 	var activeCount int32
@@ -213,6 +217,7 @@ func TestExecutor_MaxConcurrentLimitsParallelism(t *testing.T) {
 	}
 }
 
+// TestExecutor_EmptyInput 测试空输入的处理。
 func TestExecutor_EmptyInput(t *testing.T) {
 	registry := NewRegistry()
 	executor := NewToolExecutor(registry, 10)
@@ -234,6 +239,7 @@ func TestExecutor_EmptyInput(t *testing.T) {
 	}
 }
 
+// TestExecutor_UnknownTool 测试未知工具的处理。
 func TestExecutor_UnknownTool(t *testing.T) {
 	registry := NewRegistry()
 	tool := newCustomExecuteTool("known-tool", func(ctx context.Context, input json.RawMessage) (*ToolResult, error) {
@@ -267,6 +273,7 @@ func TestExecutor_UnknownTool(t *testing.T) {
 	}
 }
 
+// TestExecutor_ResultsPreserveOrder 测试结果保持输入顺序。
 func TestExecutor_ResultsPreserveOrder(t *testing.T) {
 	// 创建返回各自名称的工具，验证结果顺序与输入一致
 	tools := make([]Tool, 5)
@@ -309,6 +316,7 @@ func TestExecutor_ResultsPreserveOrder(t *testing.T) {
 	}
 }
 
+// TestExecutor_DefaultMaxConcurrent 测试默认最大并发数。
 func TestExecutor_DefaultMaxConcurrent(t *testing.T) {
 	registry := NewRegistry()
 

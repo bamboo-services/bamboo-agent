@@ -9,12 +9,22 @@ import (
 	"github.com/bamboo-services/bamboo-agent/tool"
 )
 
-// LoopStrategy defines the iteration strategy for an agent's execution cycle.
+// LoopStrategy 定义 Agent 执行周期的迭代策略。
+//
+// 定义了执行策略的核心能力，包括：
+//   - Execute - 执行 Agent 任务并返回最终结果
 type LoopStrategy interface {
 	Execute(ctx context.Context, core *agentCore, input string) (*AgentResult, error)
 }
 
-// agentCore is the minimal internal state needed by LoopStrategy.
+// agentCore 是 LoopStrategy 需要的最小内部状态。
+//
+// 用于在 LoopStrategy 执行过程中传递必要的上下文信息，包含：
+//   - client - BM-SDK 客户端，用于 AI 交互
+//   - config - Agent 配置参数
+//   - session - 会话消息历史
+//   - registry - 工具注册表
+//   - executor - 工具执行器
 type agentCore struct {
 	client   bamboo.BambooClient
 	config   AgentConfig
@@ -23,17 +33,36 @@ type agentCore struct {
 	executor *tool.ToolExecutor
 }
 
-// ReActLoop implements the Reason-Act iteration strategy:
-//  1. Send messages to AI (streaming)
-//  2. If AI returns tool_use → execute tools → append results → loop
-//  3. If AI returns end_turn → return final result
-//  4. If max iterations reached → force stop
+// ReActLoop 实现 Reason-Act 迭代策略。
+//
+// 执行流程如下：
+//   - 向 AI 发送消息（流式）
+//   - 如果 AI 返回 tool_use → 执行工具 → 追加结果 → 继续循环
+//   - 如果 AI 返回 end_turn → 返回最终结果
+//   - 如果达到最大迭代次数 → 强制停止
 type ReActLoop struct{}
 
+// NewReActLoop 创建一个新的 ReActLoop 实例。
+//
+// 返回：
+//   - *ReActLoop - ReActLoop 实例
 func NewReActLoop() *ReActLoop {
 	return &ReActLoop{}
 }
 
+// Execute 执行 Agent 任务并返回最终结果。
+//
+// 使用 ReAct 迭代策略执行任务，支持工具调用和流式输出。
+// 在每次迭代中检查上下文长度，必要时进行压缩。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - core - agentCore 实例，包含执行所需的客户端、配置和状态
+//   - input - 用户输入文本
+//
+// 返回：
+//   - *AgentResult - 执行结果，包含生成内容、工具调用记录和使用量
+//   - error - 执行错误，如上下文取消、AI 调用失败或工具执行失败
 func (l *ReActLoop) Execute(ctx context.Context, core *agentCore, input string) (*AgentResult, error) {
 	core.session.AppendMessage(bamboo.NewUserMessage(input))
 

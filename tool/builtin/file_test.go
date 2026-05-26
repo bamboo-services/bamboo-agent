@@ -14,6 +14,7 @@ import (
 // FileReadTool Tests
 // =============================================================================
 
+// TestFileReadTool_Info 测试 FileReadTool 的 Info 方法返回正确的元数据。
 func TestFileReadTool_Info(t *testing.T) {
 	tool := FileReadTool{}
 	info := tool.Info()
@@ -32,6 +33,7 @@ func TestFileReadTool_Info(t *testing.T) {
 	}
 }
 
+// TestFileReadTool_ReadsExistingFile 测试读取已存在的文件。
 func TestFileReadTool_ReadsExistingFile(t *testing.T) {
 	dir := t.TempDir()
 	filePath := filepath.Join(dir, "test.txt")
@@ -55,6 +57,7 @@ func TestFileReadTool_ReadsExistingFile(t *testing.T) {
 	}
 }
 
+// TestFileReadTool_NonExistentFile 测试读取不存在的文件返回错误。
 func TestFileReadTool_NonExistentFile(t *testing.T) {
 	tool := FileReadTool{}
 	input, _ := json.Marshal(map[string]string{"path": "/nonexistent/path/file.txt"})
@@ -67,6 +70,7 @@ func TestFileReadTool_NonExistentFile(t *testing.T) {
 	}
 }
 
+// TestFileReadTool_InvalidJSON 测试无效 JSON 输入返回错误。
 func TestFileReadTool_InvalidJSON(t *testing.T) {
 	tool := FileReadTool{}
 	_, err := tool.Execute(context.Background(), json.RawMessage(`{invalid`))
@@ -79,6 +83,7 @@ func TestFileReadTool_InvalidJSON(t *testing.T) {
 // FileWriteTool Tests
 // =============================================================================
 
+// TestFileWriteTool_Info 测试 FileWriteTool 的 Info 方法返回正确的元数据。
 func TestFileWriteTool_Info(t *testing.T) {
 	tool := FileWriteTool{}
 	info := tool.Info()
@@ -100,6 +105,7 @@ func TestFileWriteTool_Info(t *testing.T) {
 	}
 }
 
+// TestFileWriteTool_WritesFile 测试写入文件并验证内容。
 func TestFileWriteTool_WritesFile(t *testing.T) {
 	dir := t.TempDir()
 	filePath := filepath.Join(dir, "output.txt")
@@ -128,6 +134,7 @@ func TestFileWriteTool_WritesFile(t *testing.T) {
 	}
 }
 
+// TestFileWriteTool_CreatesDirectory 测试自动创建目录并写入文件。
 func TestFileWriteTool_CreatesDirectory(t *testing.T) {
 	dir := t.TempDir()
 	filePath := filepath.Join(dir, "sub", "dir", "output.txt")
@@ -152,6 +159,7 @@ func TestFileWriteTool_CreatesDirectory(t *testing.T) {
 	}
 }
 
+// TestFileWriteTool_InvalidJSON 测试无效 JSON 输入返回错误。
 func TestFileWriteTool_InvalidJSON(t *testing.T) {
 	tool := FileWriteTool{}
 	_, err := tool.Execute(context.Background(), json.RawMessage(`{invalid`))
@@ -164,6 +172,7 @@ func TestFileWriteTool_InvalidJSON(t *testing.T) {
 // FileSearchTool Tests
 // =============================================================================
 
+// TestFileSearchTool_Info 测试 FileSearchTool 的 Info 方法返回正确的元数据。
 func TestFileSearchTool_Info(t *testing.T) {
 	tool := FileSearchTool{}
 	info := tool.Info()
@@ -185,6 +194,7 @@ func TestFileSearchTool_Info(t *testing.T) {
 	}
 }
 
+// TestFileSearchTool_FindsMatchingLines 测试搜索并返回匹配的行。
 func TestFileSearchTool_FindsMatchingLines(t *testing.T) {
 	dir := t.TempDir()
 	filePath := filepath.Join(dir, "search.txt")
@@ -209,6 +219,7 @@ func TestFileSearchTool_FindsMatchingLines(t *testing.T) {
 	}
 }
 
+// TestFileSearchTool_NoMatches 测试无匹配时返回空结果。
 func TestFileSearchTool_NoMatches(t *testing.T) {
 	dir := t.TempDir()
 	filePath := filepath.Join(dir, "search.txt")
@@ -228,6 +239,7 @@ func TestFileSearchTool_NoMatches(t *testing.T) {
 	}
 }
 
+// TestFileSearchTool_NonExistentFile 测试搜索不存在的文件返回错误。
 func TestFileSearchTool_NonExistentFile(t *testing.T) {
 	tool := FileSearchTool{}
 	input, _ := json.Marshal(map[string]string{"path": "/nonexistent/file.txt", "pattern": "test"})
@@ -240,6 +252,7 @@ func TestFileSearchTool_NonExistentFile(t *testing.T) {
 	}
 }
 
+// TestFileSearchTool_InvalidJSON 测试无效 JSON 输入返回错误。
 func TestFileSearchTool_InvalidJSON(t *testing.T) {
 	tool := FileSearchTool{}
 	_, err := tool.Execute(context.Background(), json.RawMessage(`{invalid`))
@@ -252,6 +265,7 @@ func TestFileSearchTool_InvalidJSON(t *testing.T) {
 // Interface compliance checks
 // =============================================================================
 
+// TestToolInterfaceCompliance 测试所有文件工具都实现了 tool.Tool 接口。
 func TestToolInterfaceCompliance(t *testing.T) {
 	// 确保所有工具都实现了 tool.Tool 接口
 	var _ tool.Tool = FileReadTool{}

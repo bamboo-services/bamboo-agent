@@ -7,7 +7,7 @@ import (
 	"github.com/bamboo-services/bamboo-agent/tool"
 )
 
-// TestNewSession 测试创建新会话 ✨
+// TestNewSession 测试创建新会话。
 func TestNewSession(t *testing.T) {
 	registry := tool.NewRegistry()
 	session := NewSession(registry)
@@ -28,7 +28,7 @@ func TestNewSession(t *testing.T) {
 	}
 }
 
-// TestNewSessionWithNilRegistry 测试使用 nil 工具注册表创建会话
+// TestNewSessionWithNilRegistry 测试使用 nil 工具注册表创建会话。
 func TestNewSessionWithNilRegistry(t *testing.T) {
 	session := NewSession(nil)
 
@@ -42,7 +42,7 @@ func TestNewSessionWithNilRegistry(t *testing.T) {
 	}
 }
 
-// TestAppendMessage 测试追加消息到历史记录 📝
+// TestAppendMessage 测试追加消息到历史记录。
 func TestAppendMessage(t *testing.T) {
 	registry := tool.NewRegistry()
 	session := NewSession(registry)
@@ -62,7 +62,7 @@ func TestAppendMessage(t *testing.T) {
 	}
 }
 
-// TestGetMessages 测试获取所有消息
+// TestGetMessages 测试获取所有消息。
 func TestGetMessages(t *testing.T) {
 	registry := tool.NewRegistry()
 	session := NewSession(registry)
@@ -92,7 +92,7 @@ func TestGetMessages(t *testing.T) {
 	}
 }
 
-// TestGetMessagesReturnsCopy 测试 GetMessages 返回副本
+// TestGetMessagesReturnsCopy 测试 GetMessages 返回副本。
 func TestGetMessagesReturnsCopy(t *testing.T) {
 	registry := tool.NewRegistry()
 	session := NewSession(registry)
@@ -118,7 +118,7 @@ func TestGetMessagesReturnsCopy(t *testing.T) {
 	}
 }
 
-// TestClear 测试清空消息历史 🗑️
+// TestClear 测试清空消息历史。
 func TestClear(t *testing.T) {
 	registry := tool.NewRegistry()
 	session := NewSession(registry)
@@ -145,7 +145,7 @@ func TestClear(t *testing.T) {
 	}
 }
 
-// TestMultipleAppendsPreserveOrder 测试多次追加保持顺序
+// TestMultipleAppendsPreserveOrder 测试多次追加保持顺序。
 func TestMultipleAppendsPreserveOrder(t *testing.T) {
 	registry := tool.NewRegistry()
 	session := NewSession(registry)

@@ -107,6 +107,7 @@ func newTestBridgeErrorServer() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
+// TestNewBridge 测试创建新桥接器。
 func TestNewBridge(t *testing.T) {
 	cfg := DefaultConfig("http://localhost:8080")
 	client := NewClient(cfg)
@@ -120,6 +121,7 @@ func TestNewBridge(t *testing.T) {
 	}
 }
 
+// TestBridgeAsTools 测试桥接器转换为工具。
 func TestBridgeAsTools(t *testing.T) {
 	cfg := DefaultConfig("http://localhost:8080")
 	client := NewClient(cfg)
@@ -154,6 +156,7 @@ func TestBridgeAsTools(t *testing.T) {
 	}
 }
 
+// TestBridgeDiscoverAndConvert 测试桥接器发现和转换工具。
 func TestBridgeDiscoverAndConvert(t *testing.T) {
 	server := newTestBridgeServer()
 	defer server.Close()
@@ -201,6 +204,7 @@ func TestBridgeDiscoverAndConvert(t *testing.T) {
 	}
 }
 
+// TestMcpToolAdapterInfo 测试 MCP 工具适配器信息。
 func TestMcpToolAdapterInfo(t *testing.T) {
 	adapter := &mcpToolAdapter{
 		info: MCPToolInfo{
@@ -265,6 +269,7 @@ func TestMcpToolAdapterInfo(t *testing.T) {
 	}
 }
 
+// TestMcpToolAdapterExecuteSuccess 测试 MCP 工具适配器成功执行。
 func TestMcpToolAdapterExecuteSuccess(t *testing.T) {
 	server := newTestBridgeServer()
 	defer server.Close()
@@ -298,6 +303,7 @@ func TestMcpToolAdapterExecuteSuccess(t *testing.T) {
 	}
 }
 
+// TestMcpToolAdapterExecuteInvalidJSON 测试 MCP 工具适配器执行无效 JSON。
 func TestMcpToolAdapterExecuteInvalidJSON(t *testing.T) {
 	cfg := DefaultConfig("http://localhost:8080")
 	client := NewClient(cfg)
@@ -328,6 +334,7 @@ func TestMcpToolAdapterExecuteInvalidJSON(t *testing.T) {
 	}
 }
 
+// TestMcpToolAdapterExecuteMCPFailure 测试 MCP 工具适配器执行失败。
 func TestMcpToolAdapterExecuteMCPFailure(t *testing.T) {
 	server := newTestBridgeErrorServer()
 	defer server.Close()
@@ -361,6 +368,7 @@ func TestMcpToolAdapterExecuteMCPFailure(t *testing.T) {
 	}
 }
 
+// TestMcpToolAdapterExecuteWithMultipleContentItems 测试 MCP 工具适配器执行多个内容项。
 func TestMcpToolAdapterExecuteWithMultipleContentItems(t *testing.T) {
 	// Custom server that returns multiple content items
 	mux := http.NewServeMux()
@@ -439,6 +447,7 @@ func TestMcpToolAdapterExecuteWithMultipleContentItems(t *testing.T) {
 	}
 }
 
+// TestParsePropertiesNilSchema 测试解析空属性模式。
 func TestParsePropertiesNilSchema(t *testing.T) {
 	props := parseProperties(nil)
 	if props != nil {
@@ -446,6 +455,7 @@ func TestParsePropertiesNilSchema(t *testing.T) {
 	}
 }
 
+// TestParsePropertiesEmptySchema 测试解析空模式属性。
 func TestParsePropertiesEmptySchema(t *testing.T) {
 	schema := json.RawMessage(`{}`)
 	props := parseProperties(schema)
@@ -455,6 +465,7 @@ func TestParsePropertiesEmptySchema(t *testing.T) {
 	}
 }
 
+// TestParsePropertiesWithProperties 测试解析带属性的属性。
 func TestParsePropertiesWithProperties(t *testing.T) {
 	schema := json.RawMessage(`{
 		"type": "object",
@@ -511,6 +522,7 @@ func TestParsePropertiesWithProperties(t *testing.T) {
 	}
 }
 
+// TestBridgeImplementsToolInterface 测试桥接器实现工具接口。
 func TestBridgeImplementsToolInterface(t *testing.T) {
 	server := newTestBridgeServer()
 	defer server.Close()

@@ -7,30 +7,33 @@ import (
 	"github.com/bamboo-services/bamboo-agent/tool"
 )
 
-// Agent is the core interface for an AI agent.
+// Agent 是 AI Agent 的核心接口。
 //
-// It provides methods for running tasks (with or without streaming),
-// managing tools, and configuring the system prompt.
+// 定义了 Agent 的完整生命周期，包括：
+//   - 任务执行（Run / Stream）
+//   - 历史消息复用（RunWithMessages）
+//   - 工具注册（AddTool）
+//   - 系统提示词配置（SetSystemPrompt）
 type Agent interface {
-	// Run executes an agent task and returns the final result.
+	// Run 执行一个 Agent 任务并返回最终结果。
 	Run(ctx context.Context, input string) (*AgentResult, error)
 
-	// Stream executes an agent task and returns events via channel.
+	// Stream 执行一个 Agent 任务并通过 channel 返回事件。
 	Stream(ctx context.Context, input string) (<-chan AgentEvent, error)
 
-	// RunWithMessages executes using existing message history.
+	// RunWithMessages 使用现有的消息历史执行。
 	RunWithMessages(ctx context.Context, messages []bamboo.BambooMessage) (*AgentResult, error)
 
-	// AddTool registers a tool to the agent.
+	// AddTool 向 Agent 注册一个工具。
 	AddTool(t tool.Tool) error
 
-	// SetSystemPrompt updates the system prompt.
+	// SetSystemPrompt 更新系统提示词。
 	SetSystemPrompt(prompt string)
 }
 
-// NewAgent creates a new agent with the given client and config.
+// NewAgent 使用给定的客户端和配置创建一个新的 Agent。
 //
-// If config.LoopStrategy is nil, a default ReActLoop is used.
+// 如果 config.LoopStrategy 为 nil，则使用默认的 ReActLoop。
 func NewAgent(client bamboo.BambooClient, config AgentConfig) Agent {
 	registry := tool.NewRegistry()
 	session := NewSession(registry)
@@ -45,8 +48,17 @@ func NewAgent(client bamboo.BambooClient, config AgentConfig) Agent {
 	}
 }
 
-// Run executes an agent task and returns the final result.
-// It delegates to the configured LoopStrategy (or the default ReActLoop).
+// Run 执行一个 Agent 任务并返回最终结果。
+//
+// 委托给配置的 LoopStrategy（或默认的 ReActLoop）执行。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - input - 用户输入文本
+//
+// 返回：
+//   - *AgentResult - 执行结果，包含生成内容和工具调用记录
+//   - error - 执行错误，如上下文取消或 AI 调用失败
 func (a *agentCore) Run(ctx context.Context, input string) (*AgentResult, error) {
 	strategy := a.config.LoopStrategy
 	if strategy == nil {
@@ -55,8 +67,17 @@ func (a *agentCore) Run(ctx context.Context, input string) (*AgentResult, error)
 	return strategy.Execute(ctx, a, input)
 }
 
-// Stream executes an agent task and emits events through a channel.
-// The channel is closed when the task finishes (or errors).
+// Stream 执行一个 Agent 任务并通过 channel 发送事件。
+//
+// 当任务完成（或出错）时，channel 会被关闭。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - input - 用户输入文本
+//
+// 返回：
+//   - <-chan AgentEvent - 事件 channel，包含流式输出事件
+//   - error - 创建 channel 或执行错误
 func (a *agentCore) Stream(ctx context.Context, input string) (<-chan AgentEvent, error) {
 	ch := make(chan AgentEvent, 64)
 
@@ -95,10 +116,18 @@ func (a *agentCore) Stream(ctx context.Context, input string) (<-chan AgentEvent
 	return ch, nil
 }
 
-// RunWithMessages executes using an existing message history.
+// RunWithMessages 使用现有的消息历史执行。
 //
-// It loads the provided messages into a fresh session, finds the last user
-// message text, and runs the loop with that text as input.
+// 将提供的消息加载到新的会话中，找到最后一条用户消息文本，
+// 并使用该文本作为输入运行循环。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - messages - 消息历史列表
+//
+// 返回：
+//   - *AgentResult - 执行结果，包含生成内容和工具调用记录
+//   - error - 执行错误，如上下文取消或 AI 调用失败
 func (a *agentCore) RunWithMessages(ctx context.Context, messages []bamboo.BambooMessage) (*AgentResult, error) {
 	a.session.Clear()
 	for _, msg := range messages {
@@ -136,12 +165,21 @@ func (a *agentCore) RunWithMessages(ctx context.Context, messages []bamboo.Bambo
 	return strategy.Execute(ctx, a, lastUserInput)
 }
 
-// AddTool registers a tool in the agent's tool registry.
+// AddTool 向 Agent 的工具注册表中注册一个工具。
+//
+// 参数说明：
+//   - t - 要注册的工具
+//
+// 返回：
+//   - error - 注册错误，如工具名称冲突或参数验证失败
 func (a *agentCore) AddTool(t tool.Tool) error {
 	return a.registry.Register(t)
 }
 
-// SetSystemPrompt updates the system prompt in the agent's config.
+// SetSystemPrompt 更新 Agent 配置中的系统提示词。
+//
+// 参数说明：
+//   - prompt - 新的系统提示词
 func (a *agentCore) SetSystemPrompt(prompt string) {
 	a.config.SystemPrompt = prompt
 }

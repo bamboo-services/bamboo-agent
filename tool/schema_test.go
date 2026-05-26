@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+// TestInputSchemaRoundTrip 测试 InputSchema 的 JSON 序列化与反序列化。
 func TestInputSchemaRoundTrip(t *testing.T) {
 	original := InputSchema{
 		Type: "object",
@@ -79,6 +80,7 @@ func TestInputSchemaRoundTrip(t *testing.T) {
 	}
 }
 
+// TestPropertyDefRoundTrip 测试 PropertyDef 的 JSON 序列化与反序列化。
 func TestPropertyDefRoundTrip(t *testing.T) {
 	original := PropertyDef{
 		Type:        "string",
@@ -115,6 +117,7 @@ func TestPropertyDefRoundTrip(t *testing.T) {
 	}
 }
 
+// TestInputSchemaOmitemptyFields 测试 InputSchema 的 omitempty 字段行为。
 func TestInputSchemaOmitemptyFields(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -164,6 +167,7 @@ func TestInputSchemaOmitemptyFields(t *testing.T) {
 	}
 }
 
+// TestPropertyDefOmitemptyFields 测试 PropertyDef 的 omitempty 字段行为。
 func TestPropertyDefOmitemptyFields(t *testing.T) {
 	tests := []struct {
 		name     string

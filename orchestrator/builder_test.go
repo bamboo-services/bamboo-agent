@@ -36,6 +36,7 @@ func (t *mockTool) Execute(ctx context.Context, input json.RawMessage) (*tool.To
 	return &tool.ToolResult{Content: "ok"}, nil
 }
 
+// TestBuilder_FullBuild 测试完整构建 Agent。
 func TestBuilder_FullBuild(t *testing.T) {
 	client := &mockBambooClient{}
 	mockTool1 := &mockTool{info: tool.ToolInfo{Name: "tool1"}}
@@ -56,11 +57,11 @@ func TestBuilder_FullBuild(t *testing.T) {
 		t.Fatal("Build() returned nil agent")
 	}
 
-	// Verify system prompt was set
 	agent.SetSystemPrompt("test")
 	agent.SetSystemPrompt("custom prompt")
 }
 
+// TestBuilder_MissingClientPanics 测试缺少 Client 时panic。
 func TestBuilder_MissingClientPanics(t *testing.T) {
 	defer func() {
 		r := recover()
@@ -75,6 +76,7 @@ func TestBuilder_MissingClientPanics(t *testing.T) {
 	NewAgentBuilder().Build()
 }
 
+// TestBuilder_DefaultConfig 测试默认配置。
 func TestBuilder_DefaultConfig(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -87,6 +89,7 @@ func TestBuilder_DefaultConfig(t *testing.T) {
 	}
 }
 
+// TestBuilder_SystemPromptOverride 测试系统提示覆盖。
 func TestBuilder_SystemPromptOverride(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -99,10 +102,10 @@ func TestBuilder_SystemPromptOverride(t *testing.T) {
 		t.Fatal("Build() returned nil agent")
 	}
 
-	// The prompt should be set in the config
 	agent.SetSystemPrompt("custom system prompt")
 }
 
+// TestBuilder_ToolsRegistration 测试工具注册。
 func TestBuilder_ToolsRegistration(t *testing.T) {
 	client := &mockBambooClient{}
 	mockTool1 := &mockTool{info: tool.ToolInfo{Name: "tool1"}}
@@ -118,13 +121,13 @@ func TestBuilder_ToolsRegistration(t *testing.T) {
 		t.Fatal("Build() returned nil agent")
 	}
 
-	// Tools should be registered
 	err := agent.AddTool(&mockTool{info: tool.ToolInfo{Name: "tool3"}})
 	if err != nil {
 		t.Errorf("Failed to add tool after build: %v", err)
 	}
 }
 
+// TestBuilder_ChainedFluentCalls 测试链式调用。
 func TestBuilder_ChainedFluentCalls(t *testing.T) {
 	client := &mockBambooClient{}
 	mockTool := &mockTool{info: tool.ToolInfo{Name: "tool"}}
@@ -141,6 +144,7 @@ func TestBuilder_ChainedFluentCalls(t *testing.T) {
 	}
 }
 
+// TestBuilder_EmptyBuilderJustClient 测试仅设置 Client。
 func TestBuilder_EmptyBuilderJustClient(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -153,6 +157,7 @@ func TestBuilder_EmptyBuilderJustClient(t *testing.T) {
 	}
 }
 
+// TestBuilder_MultipleWithTools 测试多次 WithTools。
 func TestBuilder_MultipleWithTools(t *testing.T) {
 	client := &mockBambooClient{}
 	mockTool1 := &mockTool{info: tool.ToolInfo{Name: "tool1"}}
@@ -170,6 +175,7 @@ func TestBuilder_MultipleWithTools(t *testing.T) {
 	}
 }
 
+// TestBuilder_ConfigOverride 测试配置覆盖。
 func TestBuilder_ConfigOverride(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -187,11 +193,11 @@ func TestBuilder_ConfigOverride(t *testing.T) {
 	}
 }
 
+// TestBuilder_NullSafeReturns 测试空安全返回。
 func TestBuilder_NullSafeReturns(t *testing.T) {
 	client := &mockBambooClient{}
 	builder := NewAgentBuilder()
 
-	// All methods should return non-nil builder
 	if builder.WithClient(client) == nil {
 		t.Error("WithClient() returned nil")
 	}
@@ -206,10 +212,10 @@ func TestBuilder_NullSafeReturns(t *testing.T) {
 	}
 }
 
+// TestBuilder_WithSystemPromptEmptyString 测试空字符串提示。
 func TestBuilder_WithSystemPromptEmptyString(t *testing.T) {
 	client := &mockBambooClient{}
 
-	// Empty string should not override default
 	agent := NewAgentBuilder().
 		WithClient(client).
 		WithSystemPrompt("").
@@ -220,6 +226,7 @@ func TestBuilder_WithSystemPromptEmptyString(t *testing.T) {
 	}
 }
 
+// TestBuilder_ReusableBuilder 测试可重用 Builder。
 func TestBuilder_ReusableBuilder(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -230,14 +237,12 @@ func TestBuilder_ReusableBuilder(t *testing.T) {
 		t.Fatal("First Build() returned nil")
 	}
 
-	// Builder can be reused for a second agent
 	client2 := &mockBambooClient{}
 	agent2 := builder.WithClient(client2).Build()
 	if agent2 == nil {
 		t.Fatal("Second Build() returned nil")
 	}
 
-	// Agents should be different
 	if agent1 == agent2 {
 		t.Error("Expected different agent instances")
 	}

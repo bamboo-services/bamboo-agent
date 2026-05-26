@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+// TestDefaultConfig 测试默认配置的值。
 func TestDefaultConfig(t *testing.T) {
 	config := DefaultConfig()
 

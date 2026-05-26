@@ -6,7 +6,7 @@ import (
 	bamboo "github.com/bamboo-services/bamboo-messages/bamboo"
 )
 
-// TestAgentEventTypeValues 验证所有事件类型常量都是非空字符串 ✨
+// TestAgentEventTypeValues 验证所有事件类型常量都是非空字符串。
 func TestAgentEventTypeValues(t *testing.T) {
 	tests := []struct {
 		name  string
@@ -30,7 +30,7 @@ func TestAgentEventTypeValues(t *testing.T) {
 	}
 }
 
-// TestToolCallRecordFields 测试 ToolCallRecord 字段访问 🛠️
+// TestToolCallRecordFields 测试 ToolCallRecord 字段访问。
 func TestToolCallRecordFields(t *testing.T) {
 	record := ToolCallRecord{
 		ID:      "test-123",
@@ -71,7 +71,7 @@ func TestToolCallRecordFields(t *testing.T) {
 	}
 }
 
-// TestAgentResultFields 测试 AgentResult 字段访问和零值 ✨
+// TestAgentResultFields 测试 AgentResult 字段访问和零值。
 func TestAgentResultFields(t *testing.T) {
 	// 测试有值的 AgentResult
 	result := AgentResult{
@@ -133,7 +133,7 @@ func TestAgentResultFields(t *testing.T) {
 	}
 }
 
-// TestAgentEventFields 测试 AgentEvent 结构体字段 📦
+// TestAgentEventFields 测试 AgentEvent 结构体字段。
 func TestAgentEventFields(t *testing.T) {
 	toolCall := &ToolCallRecord{ID: "call-1", Name: "test_tool"}
 	result := &AgentResult{Content: "test result"}

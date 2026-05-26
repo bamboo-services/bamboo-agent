@@ -10,19 +10,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TestTaskStatus_Values 测试 TaskStatus 常量的值。
 func TestTaskStatus_Values(t *testing.T) {
-	// 测试 TaskStatus 常量的值
 	assert.Equal(t, TaskStatus("pending"), TaskPending, "TaskPending should be 'pending'")
 	assert.Equal(t, TaskStatus("running"), TaskRunning, "TaskRunning should be 'running'")
 	assert.Equal(t, TaskStatus("completed"), TaskCompleted, "TaskCompleted should be 'completed'")
 	assert.Equal(t, TaskStatus("failed"), TaskFailed, "TaskFailed should be 'failed'")
 }
 
+// TestTask_StructAssignment 测试 Task 结构体赋值。
 func TestTask_StructAssignment(t *testing.T) {
-	// 创建一个模拟的 Agent
 	mockAgent := &mockAgent{}
 
-	// 创建一个 Task
 	task := Task{
 		ID:          "task-001",
 		Description: "Test task description",
@@ -34,7 +33,6 @@ func TestTask_StructAssignment(t *testing.T) {
 		Error:       nil,
 	}
 
-	// 验证所有字段
 	assert.Equal(t, "task-001", task.ID, "Task ID should match")
 	assert.Equal(t, "Test task description", task.Description, "Task Description should match")
 	assert.Equal(t, mockAgent, task.Agent, "Task Agent should match")
@@ -45,13 +43,13 @@ func TestTask_StructAssignment(t *testing.T) {
 	assert.Nil(t, task.Error, "Task Error should be nil")
 }
 
+// TestTask_StatusUpdate 测试任务状态更新。
 func TestTask_StatusUpdate(t *testing.T) {
 	task := Task{
 		ID:     "task-002",
 		Status: TaskPending,
 	}
 
-	// 测试状态更新
 	task.Status = TaskRunning
 	assert.Equal(t, TaskRunning, task.Status, "Task status should update to TaskRunning")
 
@@ -62,30 +60,31 @@ func TestTask_StatusUpdate(t *testing.T) {
 	assert.Equal(t, TaskFailed, task.Status, "Task status should update to TaskFailed")
 }
 
+// TestTask_DependsOnMultiple 测试多个依赖项。
 func TestTask_DependsOnMultiple(t *testing.T) {
 	task := Task{
 		ID:        "task-003",
 		DependsOn: []string{"task-001", "task-002", "task-004"},
 	}
 
-	// 验证多个依赖项
 	assert.Equal(t, 3, len(task.DependsOn), "Task should have 3 dependencies")
 	assert.Contains(t, task.DependsOn, "task-001", "DependsOn should contain task-001")
 	assert.Contains(t, task.DependsOn, "task-002", "DependsOn should contain task-002")
 	assert.Contains(t, task.DependsOn, "task-004", "DependsOn should contain task-004")
 }
 
+// TestTask_EmptyDependsOn 测试空依赖。
 func TestTask_EmptyDependsOn(t *testing.T) {
 	task := Task{
 		ID:        "task-004",
 		DependsOn: []string{},
 	}
 
-	// 验证空依赖
 	assert.Empty(t, task.DependsOn, "Task should have no dependencies")
 	assert.Equal(t, 0, len(task.DependsOn), "DependsOn length should be 0")
 }
 
+// TestTask_WithResultAndError 测试带结果的任务。
 func TestTask_WithResultAndError(t *testing.T) {
 	mockResult := &agent.AgentResult{
 		Content:    "Test result content",
@@ -98,13 +97,13 @@ func TestTask_WithResultAndError(t *testing.T) {
 		Error:  nil,
 	}
 
-	// 验证 Result
 	assert.NotNil(t, task.Result, "Task Result should not be nil")
 	assert.Equal(t, "Test result content", task.Result.Content, "Result content should match")
 	assert.Equal(t, 3, task.Result.Iterations, "Result iterations should match")
 	assert.Nil(t, task.Error, "Task Error should be nil")
 }
 
+// TestTask_WithError 测试带错误的任务。
 func TestTask_WithError(t *testing.T) {
 	expectedError := assert.AnError
 	task := Task{
@@ -114,7 +113,6 @@ func TestTask_WithError(t *testing.T) {
 		Error:  expectedError,
 	}
 
-	// 验证 Error
 	assert.Nil(t, task.Result, "Task Result should be nil")
 	assert.Equal(t, expectedError, task.Error, "Task Error should match")
 }
@@ -145,5 +143,4 @@ func (m *mockAgent) AddTool(t tool.Tool) error {
 }
 
 func (m *mockAgent) SetSystemPrompt(prompt string) {
-	// Mock implementation
 }

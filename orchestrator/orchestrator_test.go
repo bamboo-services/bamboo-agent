@@ -94,6 +94,7 @@ func slowAgent(d time.Duration, content string, start *atomic.Int64) *orchMockAg
 // Tests
 // ---------------------------------------------------------------------------
 
+// TestOrchestrator_RegisterAgent 测试注册 Agent 功能。
 func TestOrchestrator_RegisterAgent(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -105,6 +106,7 @@ func TestOrchestrator_RegisterAgent(t *testing.T) {
 	assert.Contains(t, err.Error(), "already registered")
 }
 
+// TestOrchestrator_ExecuteSequential 测试顺序执行任务。
 func TestOrchestrator_ExecuteSequential(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -140,6 +142,7 @@ func TestOrchestrator_ExecuteSequential(t *testing.T) {
 	}
 }
 
+// TestOrchestrator_ExecuteParallel 测试并行执行任务。
 func TestOrchestrator_ExecuteParallel(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -172,7 +175,6 @@ func TestOrchestrator_ExecuteParallel(t *testing.T) {
 		assert.Equal(t, TaskCompleted, r.Status)
 	}
 
-	// Verify tasks ran roughly in parallel: all should start within 200ms of each other
 	mu.Lock()
 	defer mu.Unlock()
 	require.Len(t, startTimes, 3)
@@ -180,10 +182,10 @@ func TestOrchestrator_ExecuteParallel(t *testing.T) {
 	assert.Less(t, spread, int64(200), "tasks should start within 200ms of each other (parallel)")
 }
 
+// TestOrchestrator_Execute_DependencyGraph 测试依赖图执行。
 func TestOrchestrator_Execute_DependencyGraph(t *testing.T) {
 	o := NewOrchestrator()
 
-	// Graph: a -> c, b -> c (c depends on a and b; a and b are independent)
 	var execOrder []string
 	var mu sync.Mutex
 
@@ -218,7 +220,6 @@ func TestOrchestrator_Execute_DependencyGraph(t *testing.T) {
 		assert.Equal(t, TaskCompleted, r.Status, fmt.Sprintf("task %s should be completed", r.ID))
 	}
 
-	// a and b must come before c
 	idx := func(name string) int {
 		for i, n := range execOrder {
 			if n == name {
@@ -231,6 +232,7 @@ func TestOrchestrator_Execute_DependencyGraph(t *testing.T) {
 	assert.Less(t, idx("b"), idx("c"), "b should execute before c")
 }
 
+// TestOrchestrator_Execute_TaskFailureIsolation 测试任务失败隔离。
 func TestOrchestrator_Execute_TaskFailureIsolation(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -243,7 +245,7 @@ func TestOrchestrator_Execute_TaskFailureIsolation(t *testing.T) {
 	}
 
 	results, err := o.Execute(context.Background(), tasks)
-	require.NoError(t, err) // Execute returns nil error; individual failures in Task.Error
+	require.NoError(t, err)
 
 	for _, r := range results {
 		if r.ID == "a" {
@@ -257,6 +259,7 @@ func TestOrchestrator_Execute_TaskFailureIsolation(t *testing.T) {
 	}
 }
 
+// TestOrchestrator_Execute_FailedDependencyCascades 测试失败依赖级联。
 func TestOrchestrator_Execute_FailedDependencyCascades(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -286,10 +289,10 @@ func TestOrchestrator_Execute_FailedDependencyCascades(t *testing.T) {
 	}
 }
 
+// TestOrchestrator_Execute_ContextCancellation 测试上下文取消。
 func TestOrchestrator_Execute_ContextCancellation(t *testing.T) {
 	o := NewOrchestrator()
 
-	// Agent that blocks forever until context is cancelled
 	o.RegisterAgent("blocked", &orchMockAgent{
 		runFunc: func(ctx context.Context, input string) (*agent.AgentResult, error) {
 			<-ctx.Done()
@@ -297,7 +300,6 @@ func TestOrchestrator_Execute_ContextCancellation(t *testing.T) {
 		},
 	})
 
-	// Use a goroutine to start Execute
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
 
@@ -314,15 +316,14 @@ func TestOrchestrator_Execute_ContextCancellation(t *testing.T) {
 
 	select {
 	case <-doneCh:
-		// Execute returned
 	case <-time.After(3 * time.Second):
 		t.Fatal("Execute did not return within 3 seconds")
 	}
 
-	// The task should be failed due to context cancellation
 	assert.Equal(t, TaskFailed, results[0].Status)
 }
 
+// TestOrchestrator_Execute_NoAgentRegistered 测试无注册 Agent。
 func TestOrchestrator_Execute_NoAgentRegistered(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -337,6 +338,7 @@ func TestOrchestrator_Execute_NoAgentRegistered(t *testing.T) {
 	assert.Contains(t, results[0].Error.Error(), "no agent")
 }
 
+// TestOrchestrator_ExecuteSequential_ContextCancellation 测试顺序执行的上下文取消。
 func TestOrchestrator_ExecuteSequential_ContextCancellation(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -345,25 +347,22 @@ func TestOrchestrator_ExecuteSequential_ContextCancellation(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	// Cancel after first task completes
 	tasks := []Task{
 		{ID: "fast", Input: "ok"},
 		{ID: "slow", Input: "will-cancel"},
 	}
 
-	// Cancel context after a short delay
 	go func() {
 		time.Sleep(50 * time.Millisecond)
 		cancel()
 	}()
 
 	results, err := o.ExecuteSequential(ctx, tasks)
-	// The first task should succeed
 	assert.Equal(t, TaskCompleted, results[0].Status)
-	// Either context error or second task failure
 	_ = err
 }
 
+// TestOrchestrator_ExecuteParallel_NoAgentRegistered 测试并行执行的无注册 Agent。
 func TestOrchestrator_ExecuteParallel_NoAgentRegistered(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -381,6 +380,7 @@ func TestOrchestrator_ExecuteParallel_NoAgentRegistered(t *testing.T) {
 	}
 }
 
+// TestOrchestrator_ExecuteParallel_TaskFailure 测试并行执行的任务失败。
 func TestOrchestrator_ExecuteParallel_TaskFailure(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -406,6 +406,7 @@ func TestOrchestrator_ExecuteParallel_TaskFailure(t *testing.T) {
 	}
 }
 
+// TestOrchestrator_Execute_UsesTaskAgentField 测试使用 Task 的 Agent 字段。
 func TestOrchestrator_Execute_UsesTaskAgentField(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -423,6 +424,7 @@ func TestOrchestrator_Execute_UsesTaskAgentField(t *testing.T) {
 	assert.Equal(t, "inline-result", results[0].Result.Content)
 }
 
+// TestOrchestrator_ExecuteSequential_TaskAgentField 测试顺序执行使用 Task 的 Agent 字段。
 func TestOrchestrator_ExecuteSequential_TaskAgentField(t *testing.T) {
 	o := NewOrchestrator()
 
@@ -440,6 +442,7 @@ func TestOrchestrator_ExecuteSequential_TaskAgentField(t *testing.T) {
 	assert.Equal(t, "seq-inline", results[0].Result.Content)
 }
 
+// TestOrchestrator_ExecuteParallel_TaskAgentField 测试并行执行使用 Task 的 Agent 字段。
 func TestOrchestrator_ExecuteParallel_TaskAgentField(t *testing.T) {
 	o := NewOrchestrator()
 

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// TestShellTool_Info tests that Info() returns correct metadata
+// TestShellTool_Info 测试 ShellTool 的 Info 方法返回正确的元数据。
 func TestShellTool_Info(t *testing.T) {
 	shell := &ShellTool{}
 	info := shell.Info()
@@ -17,7 +17,7 @@ func TestShellTool_Info(t *testing.T) {
 		t.Errorf("Expected name 'shell', got '%s'", info.Name)
 	}
 
-	if info.Description != "Execute a shell command and return stdout and stderr" {
+	if info.Description != "执行 Shell 命令并返回 stdout 和 stderr" {
 		t.Errorf("Unexpected description: %s", info.Description)
 	}
 
@@ -48,7 +48,7 @@ func TestShellTool_Info(t *testing.T) {
 	}
 }
 
-// TestShellTool_Execute_SimpleCommand tests executing a simple echo command
+// TestShellTool_Execute_SimpleCommand 测试执行简单的 echo 命令。
 func TestShellTool_Execute_SimpleCommand(t *testing.T) {
 	shell := &ShellTool{}
 	ctx := context.Background()
@@ -71,7 +71,7 @@ func TestShellTool_Execute_SimpleCommand(t *testing.T) {
 	}
 }
 
-// TestShellTool_Execute_WithArguments tests executing command with arguments
+// TestShellTool_Execute_WithArguments 测试执行带参数的命令。
 func TestShellTool_Execute_WithArguments(t *testing.T) {
 	shell := &ShellTool{}
 	ctx := context.Background()
@@ -95,7 +95,7 @@ func TestShellTool_Execute_WithArguments(t *testing.T) {
 	}
 }
 
-// TestShellTool_Execute_FailingCommand tests that failing commands return IsError=true
+// TestShellTool_Execute_FailingCommand 测试失败的命令返回 IsError=true。
 func TestShellTool_Execute_FailingCommand(t *testing.T) {
 	shell := &ShellTool{}
 	ctx := context.Background()
@@ -118,7 +118,7 @@ func TestShellTool_Execute_FailingCommand(t *testing.T) {
 	}
 }
 
-// TestShellTool_Execute_WithTimeout tests that commands can run within timeout
+// TestShellTool_Execute_WithTimeout 测试命令可以在超时时间内完成。
 func TestShellTool_Execute_WithTimeout(t *testing.T) {
 	shell := &ShellTool{}
 	ctx := context.Background()
@@ -143,7 +143,7 @@ func TestShellTool_Execute_WithTimeout(t *testing.T) {
 	}
 }
 
-// TestShellTool_Execute_TimeoutExceeded tests that commands exceeding timeout return error
+// TestShellTool_Execute_TimeoutExceeded 测试超时的命令返回错误。
 func TestShellTool_Execute_TimeoutExceeded(t *testing.T) {
 	shell := &ShellTool{}
 	ctx := context.Background()
@@ -176,7 +176,7 @@ func TestShellTool_Execute_TimeoutExceeded(t *testing.T) {
 	}
 }
 
-// TestShellTool_Execute_InvalidJSON tests that invalid JSON returns IsError=true
+// TestShellTool_Execute_InvalidJSON 测试无效 JSON 返回 IsError=true。
 func TestShellTool_Execute_InvalidJSON(t *testing.T) {
 	shell := &ShellTool{}
 	ctx := context.Background()
@@ -197,7 +197,7 @@ func TestShellTool_Execute_InvalidJSON(t *testing.T) {
 	}
 }
 
-// TestShellTool_Execute_StderrCaptured tests that stderr is captured
+// TestShellTool_Execute_StderrCaptured 测试捕获 stderr 输出。
 func TestShellTool_Execute_StderrCaptured(t *testing.T) {
 	shell := &ShellTool{}
 	ctx := context.Background()
@@ -221,7 +221,7 @@ func TestShellTool_Execute_StderrCaptured(t *testing.T) {
 	}
 }
 
-// TestShellTool_Execute_DefaultTimeout tests that default timeout is 30 seconds
+// TestShellTool_Execute_DefaultTimeout 测试默认超时为 30 秒。
 func TestShellTool_Execute_DefaultTimeout(t *testing.T) {
 	shell := &ShellTool{}
 	ctx := context.Background()

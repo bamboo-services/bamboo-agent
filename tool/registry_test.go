@@ -40,6 +40,7 @@ func newCustomExecuteTool(name string, executeFunc func(ctx context.Context, inp
 	}
 }
 
+// TestNewRegistry 测试 Registry 的初始化。
 func TestNewRegistry(t *testing.T) {
 	registry := NewRegistry()
 	if registry == nil {
@@ -50,6 +51,7 @@ func TestNewRegistry(t *testing.T) {
 	}
 }
 
+// TestRegistry_RegisterSuccess 测试成功注册工具。
 func TestRegistry_RegisterSuccess(t *testing.T) {
 	registry := NewRegistry()
 	tool := &mockTool{name: "test-tool", description: "test"}
@@ -64,6 +66,7 @@ func TestRegistry_RegisterSuccess(t *testing.T) {
 	}
 }
 
+// TestRegistry_RegisterDuplicate 测试重复注册工具的情况。
 func TestRegistry_RegisterDuplicate(t *testing.T) {
 	registry := NewRegistry()
 	tool1 := &mockTool{name: "duplicate-tool", description: "test1"}
@@ -78,6 +81,7 @@ func TestRegistry_RegisterDuplicate(t *testing.T) {
 	}
 }
 
+// TestRegistry_GetFound 测试获取已注册的工具。
 func TestRegistry_GetFound(t *testing.T) {
 	registry := NewRegistry()
 	tool := &mockTool{name: "found-tool", description: "test"}
@@ -96,6 +100,7 @@ func TestRegistry_GetFound(t *testing.T) {
 	}
 }
 
+// TestRegistry_GetNotFound 测试获取未注册的工具。
 func TestRegistry_GetNotFound(t *testing.T) {
 	registry := NewRegistry()
 
@@ -105,6 +110,7 @@ func TestRegistry_GetNotFound(t *testing.T) {
 	}
 }
 
+// TestRegistry_ExecuteCorrectTool 测试执行正确的工具。
 func TestRegistry_ExecuteCorrectTool(t *testing.T) {
 	registry := NewRegistry()
 	ctx := context.Background()
@@ -127,6 +133,7 @@ func TestRegistry_ExecuteCorrectTool(t *testing.T) {
 	}
 }
 
+// TestRegistry_ExecuteUnknown 测试执行未知工具的情况。
 func TestRegistry_ExecuteUnknown(t *testing.T) {
 	registry := NewRegistry()
 	ctx := context.Background()
@@ -137,6 +144,7 @@ func TestRegistry_ExecuteUnknown(t *testing.T) {
 	}
 }
 
+// TestRegistry_List 测试列出所有已注册的工具。
 func TestRegistry_List(t *testing.T) {
 	registry := NewRegistry()
 
@@ -169,6 +177,7 @@ func TestRegistry_List(t *testing.T) {
 	}
 }
 
+// TestRegistry_RegisterBatch 测试批量注册工具。
 func TestRegistry_RegisterBatch(t *testing.T) {
 	registry := NewRegistry()
 
@@ -185,6 +194,7 @@ func TestRegistry_RegisterBatch(t *testing.T) {
 	}
 }
 
+// TestRegistry_RegisterBatchWithDuplicate 测试批量注册包含重复工具的情况。
 func TestRegistry_RegisterBatchWithDuplicate(t *testing.T) {
 	registry := NewRegistry()
 
@@ -201,6 +211,7 @@ func TestRegistry_RegisterBatchWithDuplicate(t *testing.T) {
 	}
 }
 
+// TestRegistry_ConcurrentAccess 测试 Registry 的并发访问安全性。
 func TestRegistry_ConcurrentAccess(t *testing.T) {
 	registry := NewRegistry()
 	ctx := context.Background()
@@ -247,6 +258,7 @@ func TestRegistry_ConcurrentAccess(t *testing.T) {
 	_ = registry.List()
 }
 
+// TestRegistry_ExecuteWithError 测试工具执行返回错误的情况。
 func TestRegistry_ExecuteWithError(t *testing.T) {
 	registry := NewRegistry()
 	ctx := context.Background()
@@ -264,6 +276,7 @@ func TestRegistry_ExecuteWithError(t *testing.T) {
 	}
 }
 
+// TestRegistry_ExecuteWithInput 测试工具执行时的输入传递。
 func TestRegistry_ExecuteWithInput(t *testing.T) {
 	registry := NewRegistry()
 	ctx := context.Background()

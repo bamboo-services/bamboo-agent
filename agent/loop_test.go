@@ -94,6 +94,7 @@ func (m *mockTool) Execute(_ context.Context, _ json.RawMessage) (*tool.ToolResu
 	return m.result, nil
 }
 
+// TestReActLoop_TextOnlyResponse 测试仅返回文本的响应。
 func TestReActLoop_TextOnlyResponse(t *testing.T) {
 	mockClient := &streamingMockBambooClient{
 		chatFunc: func(_ context.Context, _ []bamboo.BambooMessage, _ string, _ *bamboo.RequestConfig) (<-chan bamboo.StreamEvent, error) {
@@ -149,6 +150,7 @@ func TestReActLoop_TextOnlyResponse(t *testing.T) {
 	}
 }
 
+// TestReActLoop_ToolCallAndLoop 测试工具调用和循环。
 func TestReActLoop_ToolCallAndLoop(t *testing.T) {
 	callCount := 0
 	mockClient := &streamingMockBambooClient{
@@ -215,6 +217,7 @@ func TestReActLoop_ToolCallAndLoop(t *testing.T) {
 	}
 }
 
+// TestReActLoop_MaxIterations 测试最大迭代次数限制。
 func TestReActLoop_MaxIterations(t *testing.T) {
 	mockClient := &streamingMockBambooClient{
 		chatFunc: func(_ context.Context, _ []bamboo.BambooMessage, _ string, _ *bamboo.RequestConfig) (<-chan bamboo.StreamEvent, error) {
@@ -261,6 +264,7 @@ func TestReActLoop_MaxIterations(t *testing.T) {
 	}
 }
 
+// TestReActLoop_ChatError 测试 Chat 错误处理。
 func TestReActLoop_ChatError(t *testing.T) {
 	mockClient := &streamingMockBambooClient{
 		chatFunc: func(_ context.Context, _ []bamboo.BambooMessage, _ string, _ *bamboo.RequestConfig) (<-chan bamboo.StreamEvent, error) {
@@ -287,6 +291,7 @@ func TestReActLoop_ChatError(t *testing.T) {
 	}
 }
 
+// TestReActLoop_StreamError 测试流错误处理。
 func TestReActLoop_StreamError(t *testing.T) {
 	mockClient := &streamingMockBambooClient{
 		chatFunc: func(_ context.Context, _ []bamboo.BambooMessage, _ string, _ *bamboo.RequestConfig) (<-chan bamboo.StreamEvent, error) {

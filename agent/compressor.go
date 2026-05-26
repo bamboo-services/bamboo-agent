@@ -7,19 +7,34 @@ import (
 	bamboo "github.com/bamboo-services/bamboo-messages/bamboo"
 )
 
-// ContextCompressor 上下文压缩器接口
+// ContextCompressor 定义上下文压缩器的接口。
+//
+// 定义了上下文压缩的核心能力，包括：
+//   - Compress - 压缩消息历史，保留关键信息
 type ContextCompressor interface {
 	Compress(ctx context.Context, messages []bamboo.BambooMessage, maxTokens int64) ([]bamboo.BambooMessage, error)
 }
 
-// SummaryCompressor 基于 AI 总结的压缩器
+// SummaryCompressor 基于 AI 总结的上下文压缩器实现。
+//
+// 通过调用 AI 模型生成对话摘要，实现消息历史的智能压缩。
 type SummaryCompressor struct {
 	client        bamboo.BambooClient
 	keepRecent    int    // 保留最近几轮对话（默认 2，即 4 条消息）
 	summaryPrompt string // 摘要生成提示词模板
 }
 
-// NewSummaryCompressor 创建基于 AI 总结的上下文压缩器
+// NewSummaryCompressor 创建基于 AI 总结的上下文压缩器。
+//
+// 使用默认配置初始化压缩器：
+//   - keepRecent - 默认保留最近 2 轮对话（即 4 条消息）
+//   - summaryPrompt - 使用预设的英文提示词生成摘要
+//
+// 参数说明：
+//   - client - Bamboo 客户端，用于调用 AI 模型
+//
+// 返回：
+//   - *SummaryCompressor - 新创建的压缩器实例
 func NewSummaryCompressor(client bamboo.BambooClient) *SummaryCompressor {
 	return &SummaryCompressor{
 		client:        client,
@@ -28,9 +43,21 @@ func NewSummaryCompressor(client bamboo.BambooClient) *SummaryCompressor {
 	}
 }
 
-// Compress 压缩消息历史
-// 策略：保留最近 N*2 条消息（N 轮），将更早的消息总结为一条摘要
-// 当消息总数 <= keepRecent*2 时，不做压缩直接返回
+// Compress 压缩消息历史，保留最近 N 轮对话并总结更早的消息。
+//
+// 压缩策略：
+//   - 保留最近 N*2 条消息（N 轮对话）
+//   - 将更早的消息通过 AI 总结为一条摘要
+//   - 当消息总数 <= keepRecent*2 时，不做压缩直接返回
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - messages - 原始消息列表
+//   - maxTokens - 最大 token 数限制（当前未使用）
+//
+// 返回：
+//   - []bamboo.BambooMessage - 压缩后的消息列表（[摘要] + 最近消息）
+//   - error - 执行错误，如 AI 调用失败
 func (c *SummaryCompressor) Compress(ctx context.Context, messages []bamboo.BambooMessage, maxTokens int64) ([]bamboo.BambooMessage, error) {
 	keepCount := c.keepRecent * 2 // 每轮 = 2 条消息
 
@@ -92,7 +119,15 @@ func (c *SummaryCompressor) Compress(ctx context.Context, messages []bamboo.Bamb
 	return result, nil
 }
 
-// estimateTokens 提供 token 估算（字符数 / 4 作为近似值）
+// estimateTokens 估算消息列表的总 token 数。
+//
+// 使用字符数除以 4 作为近似估算值。
+//
+// 参数说明：
+//   - messages - 消息列表
+//
+// 返回：
+//   - int64 - 估算的 token 总数
 func estimateTokens(messages []bamboo.BambooMessage) int64 {
 	var totalChars int64
 	for _, msg := range messages {

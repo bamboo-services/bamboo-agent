@@ -9,6 +9,7 @@ import (
 	"testing"
 )
 
+// TestCodeExecTool_Info 测试 CodeExecTool 的 Info 方法返回正确的元数据。
 func TestCodeExecTool_Info(t *testing.T) {
 	tool := &CodeExecTool{}
 	info := tool.Info()
@@ -45,6 +46,7 @@ func TestCodeExecTool_Info(t *testing.T) {
 	}
 }
 
+// TestCodeExecTool_Python 测试执行 Python 代码。
 func TestCodeExecTool_Python(t *testing.T) {
 	// Skip if python3 is not available
 	if _, err := exec.LookPath("python3"); err != nil {
@@ -69,6 +71,7 @@ func TestCodeExecTool_Python(t *testing.T) {
 	}
 }
 
+// TestCodeExecTool_Go 测试执行 Go 代码。
 func TestCodeExecTool_Go(t *testing.T) {
 	tool := &CodeExecTool{}
 	input, _ := json.Marshal(map[string]string{
@@ -94,6 +97,7 @@ func main() {
 	}
 }
 
+// TestCodeExecTool_UnsupportedLanguage 测试不支持的语言返回错误。
 func TestCodeExecTool_UnsupportedLanguage(t *testing.T) {
 	tool := &CodeExecTool{}
 	input, _ := json.Marshal(map[string]string{
@@ -113,6 +117,7 @@ func TestCodeExecTool_UnsupportedLanguage(t *testing.T) {
 	}
 }
 
+// TestCodeExecTool_InvalidCode 测试无效代码返回错误。
 func TestCodeExecTool_InvalidCode(t *testing.T) {
 	tool := &CodeExecTool{}
 	input, _ := json.Marshal(map[string]string{
@@ -134,6 +139,7 @@ func TestCodeExecTool_InvalidCode(t *testing.T) {
 	}
 }
 
+// TestCodeExecTool_InvalidJSON 测试无效 JSON 返回错误。
 func TestCodeExecTool_InvalidJSON(t *testing.T) {
 	tool := &CodeExecTool{}
 	result, err := tool.Execute(context.Background(), json.RawMessage(`{invalid json`))
@@ -148,6 +154,7 @@ func TestCodeExecTool_InvalidJSON(t *testing.T) {
 	}
 }
 
+// TestCodeExecTool_TempFilesCleanedUp 测试临时文件被正确清理。
 func TestCodeExecTool_TempFilesCleanedUp(t *testing.T) {
 	// Skip if python3 is not available
 	if _, err := exec.LookPath("python3"); err != nil {

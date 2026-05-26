@@ -96,6 +96,7 @@ func testMCPBadStatusServer() *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
+// TestDefaultConfig 测试默认配置。
 func TestDefaultConfig(t *testing.T) {
 	cfg := DefaultConfig("http://localhost:8080")
 
@@ -110,6 +111,7 @@ func TestDefaultConfig(t *testing.T) {
 	}
 }
 
+// TestConfigWithCustomValues 测试自定义配置值。
 func TestConfigWithCustomValues(t *testing.T) {
 	cfg := Config{
 		ServerURL: "http://example.com/mcp",
@@ -130,6 +132,7 @@ func TestConfigWithCustomValues(t *testing.T) {
 	}
 }
 
+// TestMCPContentSerialization 测试 MCP 内容序列化。
 func TestMCPContentSerialization(t *testing.T) {
 	content := MCPContent{
 		Type: "text",
@@ -154,6 +157,7 @@ func TestMCPContentSerialization(t *testing.T) {
 	}
 }
 
+// TestMCPContentWithData 测试带数据的 MCP 内容。
 func TestMCPContentWithData(t *testing.T) {
 	content := MCPContent{
 		Type: "image",
@@ -175,6 +179,7 @@ func TestMCPContentWithData(t *testing.T) {
 	}
 }
 
+// TestMCPToolInfoSerialization 测试 MCP 工具信息序列化。
 func TestMCPToolInfoSerialization(t *testing.T) {
 	info := MCPToolInfo{
 		Name:        "search",
@@ -200,6 +205,7 @@ func TestMCPToolInfoSerialization(t *testing.T) {
 	}
 }
 
+// TestMCPToolResultSerialization 测试 MCP 工具结果序列化。
 func TestMCPToolResultSerialization(t *testing.T) {
 	result := MCPToolResult{
 		Content: []MCPContent{
@@ -229,6 +235,7 @@ func TestMCPToolResultSerialization(t *testing.T) {
 	}
 }
 
+// TestMCPToolResultError 测试 MCP 工具错误结果。
 func TestMCPToolResultError(t *testing.T) {
 	result := MCPToolResult{
 		Content: []MCPContent{
@@ -242,6 +249,7 @@ func TestMCPToolResultError(t *testing.T) {
 	}
 }
 
+// TestJSONRPCRequestSerialization 测试 JSON-RPC 请求序列化。
 func TestJSONRPCRequestSerialization(t *testing.T) {
 	req := JSONRPCRequest{
 		JSONRPC: "2.0",
@@ -271,6 +279,7 @@ func TestJSONRPCRequestSerialization(t *testing.T) {
 	}
 }
 
+// TestJSONRPCResponseSerialization 测试 JSON-RPC 响应序列化。
 func TestJSONRPCResponseSerialization(t *testing.T) {
 	resp := JSONRPCResponse{
 		JSONRPC: "2.0",
@@ -296,6 +305,7 @@ func TestJSONRPCResponseSerialization(t *testing.T) {
 	}
 }
 
+// TestJSONRPCResponseWithError 测试带错误的 JSON-RPC 响应。
 func TestJSONRPCResponseWithError(t *testing.T) {
 	resp := JSONRPCResponse{
 		JSONRPC: "2.0",
@@ -327,6 +337,7 @@ func TestJSONRPCResponseWithError(t *testing.T) {
 	}
 }
 
+// TestNewClient 测试创建新客户端。
 func TestNewClient(t *testing.T) {
 	cfg := DefaultConfig("http://localhost:9090")
 	client := NewClient(cfg)
@@ -339,6 +350,7 @@ func TestNewClient(t *testing.T) {
 	}
 }
 
+// TestClientConnect 测试客户端连接。
 func TestClientConnect(t *testing.T) {
 	server := testMCPServer()
 	defer server.Close()
@@ -355,6 +367,7 @@ func TestClientConnect(t *testing.T) {
 	}
 }
 
+// TestClientConnectWithCustomHeaders 测试使用自定义头连接客户端。
 func TestClientConnectWithCustomHeaders(t *testing.T) {
 	receivedHeaders := make(map[string]string)
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -395,6 +408,7 @@ func TestClientConnectWithCustomHeaders(t *testing.T) {
 	}
 }
 
+// TestClientDiscoverTools 测试客户端发现工具。
 func TestClientDiscoverTools(t *testing.T) {
 	server := testMCPServer()
 	defer server.Close()
@@ -419,6 +433,7 @@ func TestClientDiscoverTools(t *testing.T) {
 	}
 }
 
+// TestClientCallTool 测试客户端调用工具。
 func TestClientCallTool(t *testing.T) {
 	server := testMCPServer()
 	defer server.Close()
@@ -445,6 +460,7 @@ func TestClientCallTool(t *testing.T) {
 	}
 }
 
+// TestClientCallToolWithNoArgs 测试客户端调用无参数工具。
 func TestClientCallToolWithNoArgs(t *testing.T) {
 	server := testMCPServer()
 	defer server.Close()
@@ -463,6 +479,7 @@ func TestClientCallToolWithNoArgs(t *testing.T) {
 	}
 }
 
+// TestClientClose 测试客户端关闭。
 func TestClientClose(t *testing.T) {
 	server := testMCPServer()
 	defer server.Close()
@@ -486,6 +503,7 @@ func TestClientClose(t *testing.T) {
 	}
 }
 
+// TestClientConnectionFailure 测试客户端连接失败。
 func TestClientConnectionFailure(t *testing.T) {
 	cfg := DefaultConfig("http://127.0.0.1:0")
 	cfg.Timeout = 1 * time.Second
@@ -503,6 +521,7 @@ func TestClientConnectionFailure(t *testing.T) {
 	}
 }
 
+// TestClientBadStatusError 测试客户端错误状态。
 func TestClientBadStatusError(t *testing.T) {
 	server := testMCPBadStatusServer()
 	defer server.Close()
@@ -517,6 +536,7 @@ func TestClientBadStatusError(t *testing.T) {
 	}
 }
 
+// TestClientRPCError 测试客户端 RPC 错误。
 func TestClientRPCError(t *testing.T) {
 	server := testMCPRPCErrServer()
 	defer server.Close()
@@ -531,6 +551,7 @@ func TestClientRPCError(t *testing.T) {
 	}
 }
 
+// TestClientRPCToolCallError 测试客户端 RPC 工具调用错误。
 func TestClientRPCToolCallError(t *testing.T) {
 	server := testMCPRPCErrServer()
 	defer server.Close()
@@ -545,6 +566,7 @@ func TestClientRPCToolCallError(t *testing.T) {
 	}
 }
 
+// TestClientIDIncrement 测试客户端 ID 递增。
 func TestClientIDIncrement(t *testing.T) {
 	server := testMCPServer()
 	defer server.Close()
@@ -564,6 +586,7 @@ func TestClientIDIncrement(t *testing.T) {
 	}
 }
 
+// TestToolsCallParamsSerialization 测试工具调用参数序列化。
 func TestToolsCallParamsSerialization(t *testing.T) {
 	params := ToolsCallParams{
 		Name: "search",
@@ -588,6 +611,7 @@ func TestToolsCallParamsSerialization(t *testing.T) {
 	}
 }
 
+// TestToolsListResultEmpty 测试空工具列表结果。
 func TestToolsListResultEmpty(t *testing.T) {
 	raw := json.RawMessage(`{"tools":[]}`)
 	var result ToolsListResult

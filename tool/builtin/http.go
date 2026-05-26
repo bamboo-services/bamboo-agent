@@ -12,41 +12,54 @@ import (
 	"github.com/bamboo-services/bamboo-agent/tool"
 )
 
-// HTTPTool makes HTTP requests.
+// HTTPTool 发起 HTTP 请求的工具。
+//
+// 提供支持 GET/POST/PUT/DELETE 等常用方法的 HTTP 客户端能力。
+// 默认请求超时时间为 30 秒。
 type HTTPTool struct {
 	client *http.Client
 }
 
-// NewHTTPTool creates an HTTPTool with default client.
+// NewHTTPTool 创建默认配置的 HTTPTool。
+//
+// 初始化一个带有 30 秒超时的 HTTP 客户端。
+//
+// 返回：
+//   - *HTTPTool - 新创建的 HTTP 工具实例
 func NewHTTPTool() *HTTPTool {
 	return &HTTPTool{
 		client: &http.Client{Timeout: 30 * time.Second},
 	}
 }
 
-// Info returns the tool metadata.
+// Info 返回工具的元数据信息。
+//
+// 返回工具的名称、描述和参数定义，供 AI Agent 识别和调用。
+//
+// 返回：
+//   - tool.ToolInfo - 工具元数据，包含名称、描述和参数定义
 func (h *HTTPTool) Info() tool.ToolInfo {
 	return tool.ToolInfo{
 		Name:        "http_request",
-		Description: "Make HTTP GET/POST/PUT/DELETE requests",
+		Description: "发起 HTTP GET/POST/PUT/DELETE 请求",
 		Parameters: tool.InputSchema{
 			Type: "object",
 			Properties: map[string]tool.PropertyDef{
 				"method": {
 					Type:        "string",
-					Description: "HTTP method: GET, POST, PUT, DELETE",
+					Description: "HTTP 方法：GET、POST、PUT、DELETE",
 				},
 				"url": {
 					Type:        "string",
-					Description: "The URL to request",
+					Description: "请求的目标 URL",
 				},
 				"headers": {
 					Type:        "object",
-					Description: "Custom headers (key-value pairs)",
+					Description: "自定义请求头（键值对）",
 				},
 				"body": {
 					Type:        "string",
-					Description: "Request body (for POST/PUT)",
+					Description: "请求体（用于 POST/PUT）",
 				},
 			},
 			Required: []string{"method", "url"},
@@ -54,7 +67,17 @@ func (h *HTTPTool) Info() tool.ToolInfo {
 	}
 }
 
-// Execute makes the HTTP request.
+// Execute 执行 HTTP 请求。
+//
+// 根据输入参数发起指定方法的 HTTP 请求，并返回响应结果。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - input - JSON 格式的请求参数，包含 method、url、headers、body 字段
+//
+// 返回：
+//   - *tool.ToolResult - 请求结果，包含状态码和响应体
+//   - error - 参数解析错误
 func (h *HTTPTool) Execute(ctx context.Context, input json.RawMessage) (*tool.ToolResult, error) {
 	var params struct {
 		Method  string            `json:"method"`

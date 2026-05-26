@@ -9,21 +9,21 @@ import (
 	"github.com/bamboo-services/bamboo-agent/tool"
 )
 
-// mockLoopStrategy is a simple LoopStrategy implementation for testing
+// mockLoopStrategy 是用于测试的简单 LoopStrategy 实现。
 type mockLoopStrategy struct{}
 
 func (m *mockLoopStrategy) Execute(ctx context.Context, core *agentCore, input string) (*AgentResult, error) {
 	return &AgentResult{Content: "mock loop result", Iterations: 1}, nil
 }
 
-// mockCompressor is a simple ContextCompressor implementation for testing
+// mockCompressor 是用于测试的简单 ContextCompressor 实现。
 type mockCompressor struct{}
 
 func (m *mockCompressor) Compress(ctx context.Context, messages []bamboo.BambooMessage, maxTokens int64) ([]bamboo.BambooMessage, error) {
 	return messages, nil
 }
 
-// testMockTool is a simple tool implementation for testing
+// testMockTool 是用于测试的简单工具实现。
 type testMockTool struct {
 	info   tool.ToolInfo
 	result *tool.ToolResult
@@ -38,6 +38,7 @@ func (m *testMockTool) Execute(_ context.Context, _ json.RawMessage) (*tool.Tool
 	return m.result, nil
 }
 
+// TestOption_WithSystemPrompt 测试 WithSystemPrompt 选项。
 func TestOption_WithSystemPrompt(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -49,6 +50,7 @@ func TestOption_WithSystemPrompt(t *testing.T) {
 	}
 }
 
+// TestOption_WithConfig 测试 WithConfig 选项。
 func TestOption_WithConfig(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -80,6 +82,7 @@ func TestOption_WithConfig(t *testing.T) {
 	}
 }
 
+// TestOption_WithMaxIterations 测试 WithMaxIterations 选项。
 func TestOption_WithMaxIterations(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -91,6 +94,7 @@ func TestOption_WithMaxIterations(t *testing.T) {
 	}
 }
 
+// TestOption_WithMaxTokens 测试 WithMaxTokens 选项。
 func TestOption_WithMaxTokens(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -102,6 +106,7 @@ func TestOption_WithMaxTokens(t *testing.T) {
 	}
 }
 
+// TestOption_WithTemperature 测试 WithTemperature 选项。
 func TestOption_WithTemperature(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -116,6 +121,7 @@ func TestOption_WithTemperature(t *testing.T) {
 	}
 }
 
+// TestOption_WithMaxConcurrentTools 测试 WithMaxConcurrentTools 选项。
 func TestOption_WithMaxConcurrentTools(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -127,6 +133,7 @@ func TestOption_WithMaxConcurrentTools(t *testing.T) {
 	}
 }
 
+// TestOption_WithLoopStrategy 测试 WithLoopStrategy 选项。
 func TestOption_WithLoopStrategy(t *testing.T) {
 	client := &mockBambooClient{}
 	strategy := &mockLoopStrategy{}
@@ -139,6 +146,7 @@ func TestOption_WithLoopStrategy(t *testing.T) {
 	}
 }
 
+// TestOption_WithCompressor 测试 WithCompressor 选项。
 func TestOption_WithCompressor(t *testing.T) {
 	client := &mockBambooClient{}
 	compressor := &mockCompressor{}
@@ -151,6 +159,7 @@ func TestOption_WithCompressor(t *testing.T) {
 	}
 }
 
+// TestOption_WithTools 测试 WithTools 选项。
 func TestOption_WithTools(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -184,6 +193,7 @@ func TestOption_WithTools(t *testing.T) {
 	}
 }
 
+// TestOption_NoOptions 测试不使用任何选项时的默认行为。
 func TestOption_NoOptions(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -210,6 +220,7 @@ func TestOption_NoOptions(t *testing.T) {
 	}
 }
 
+// TestOption_ChainedOptions 测试链式使用多个选项。
 func TestOption_ChainedOptions(t *testing.T) {
 	client := &mockBambooClient{}
 	strategy := &mockLoopStrategy{}
@@ -256,6 +267,7 @@ func TestOption_ChainedOptions(t *testing.T) {
 	}
 }
 
+// TestOption_WithConfigAndIndividualOptions 测试配置和单个选项的优先级。
 func TestOption_WithConfigAndIndividualOptions(t *testing.T) {
 	client := &mockBambooClient{}
 
@@ -293,6 +305,7 @@ func TestOption_WithConfigAndIndividualOptions(t *testing.T) {
 	}
 }
 
+// TestOption_WithSystemPromptOverridesConfig 测试 SystemPrompt 选项覆盖配置。
 func TestOption_WithSystemPromptOverridesConfig(t *testing.T) {
 	client := &mockBambooClient{}
 

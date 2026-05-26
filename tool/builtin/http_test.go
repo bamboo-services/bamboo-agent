@@ -10,6 +10,7 @@ import (
 	"testing"
 )
 
+// TestHTTPTool_Info 测试 HTTPTool 的 Info 方法返回正确的元数据。
 func TestHTTPTool_Info(t *testing.T) {
 	tool := NewHTTPTool()
 	info := tool.Info()
@@ -18,7 +19,7 @@ func TestHTTPTool_Info(t *testing.T) {
 		t.Errorf("Expected name 'http_request', got '%s'", info.Name)
 	}
 
-	if info.Description != "Make HTTP GET/POST/PUT/DELETE requests" {
+	if info.Description != "发起 HTTP GET/POST/PUT/DELETE 请求" {
 		t.Errorf("Unexpected description: '%s'", info.Description)
 	}
 
@@ -38,6 +39,7 @@ func TestHTTPTool_Info(t *testing.T) {
 	}
 }
 
+// TestHTTPTool_GET_Request 测试 HTTP GET 请求。
 func TestHTTPTool_GET_Request(t *testing.T) {
 	// Create test server
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -70,6 +72,7 @@ func TestHTTPTool_GET_Request(t *testing.T) {
 	}
 }
 
+// TestHTTPTool_POST_Request 测试 HTTP POST 请求。
 func TestHTTPTool_POST_Request(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "POST" {
@@ -108,6 +111,7 @@ func TestHTTPTool_POST_Request(t *testing.T) {
 	}
 }
 
+// TestHTTPTool_Custom_Headers 测试自定义请求头。
 func TestHTTPTool_Custom_Headers(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
@@ -136,6 +140,7 @@ func TestHTTPTool_Custom_Headers(t *testing.T) {
 	}
 }
 
+// TestHTTPTool_Invalid_URL 测试无效 URL 返回错误。
 func TestHTTPTool_Invalid_URL(t *testing.T) {
 	tool := NewHTTPTool()
 	input := map[string]interface{}{
@@ -158,6 +163,7 @@ func TestHTTPTool_Invalid_URL(t *testing.T) {
 	}
 }
 
+// TestHTTPTool_Invalid_Input 测试无效输入返回错误。
 func TestHTTPTool_Invalid_Input(t *testing.T) {
 	tool := NewHTTPTool()
 	input := "invalid json"

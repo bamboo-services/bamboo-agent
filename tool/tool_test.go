@@ -31,6 +31,7 @@ func (m *mockTool) Execute(ctx context.Context, input json.RawMessage) (*ToolRes
 	}, nil
 }
 
+// TestToolInterface 测试 Tool 接口的基本实现。
 func TestToolInterface(t *testing.T) {
 	// 创建 mockTool 实例
 	mock := &mockTool{
@@ -54,6 +55,7 @@ func TestToolInterface(t *testing.T) {
 	}
 }
 
+// TestToolExecute 测试 Tool 的 Execute 方法。
 func TestToolExecute(t *testing.T) {
 	mock := &mockTool{
 		name:        "test_tool",
@@ -75,6 +77,7 @@ func TestToolExecute(t *testing.T) {
 	}
 }
 
+// TestToolResult 测试 ToolResult 结构体的属性。
 func TestToolResult(t *testing.T) {
 	result := &ToolResult{
 		Content: "test content",
@@ -108,6 +111,7 @@ func TestToolInfo(t *testing.T) {
 	}
 }
 
+// TestInputSchema 测试 InputSchema 结构体的属性。
 func TestInputSchema(t *testing.T) {
 	schema := InputSchema{
 		Type: "object",

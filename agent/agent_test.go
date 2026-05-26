@@ -14,7 +14,7 @@ func TestAgentInterfaceSatisfaction(t *testing.T) {
 	var _ Agent = (*agentCore)(nil)
 }
 
-// TestAgent_AddTool verifies that AddTool registers a tool in the registry.
+// TestAgent_AddTool 测试 AddTool 将工具注册到注册表中。
 func TestAgent_AddTool(t *testing.T) {
 	mockClient := &mockBambooClient{}
 
@@ -40,7 +40,7 @@ func TestAgent_AddTool(t *testing.T) {
 	}
 }
 
-// TestAgent_SetSystemPrompt verifies that SetSystemPrompt updates the config.
+// TestAgent_SetSystemPrompt 测试 SetSystemPrompt 更新配置。
 func TestAgent_SetSystemPrompt(t *testing.T) {
 	mockClient := &mockBambooClient{}
 
@@ -58,7 +58,7 @@ func TestAgent_SetSystemPrompt(t *testing.T) {
 	}
 }
 
-// TestAgent_NewAgent_DefaultStrategy verifies NewAgent works with nil LoopStrategy.
+// TestAgent_NewAgent_DefaultStrategy 测试 NewAgent 在 LoopStrategy 为 nil 时正常工作。
 func TestAgent_NewAgent_DefaultStrategy(t *testing.T) {
 	mockClient := &mockBambooClient{}
 	cfg := DefaultConfig()
@@ -81,7 +81,7 @@ func TestAgent_NewAgent_DefaultStrategy(t *testing.T) {
 	}
 }
 
-// TestAgent_Run_TextResponse verifies Run delegates to LoopStrategy and returns result.
+// TestAgent_Run_TextResponse 测试 Run 委托给 LoopStrategy 并返回结果。
 func TestAgent_Run_TextResponse(t *testing.T) {
 	mockClient := &streamingMockBambooClient{
 		chatFunc: func(_ context.Context, _ []bamboo.BambooMessage, _ string, _ *bamboo.RequestConfig) (<-chan bamboo.StreamEvent, error) {
@@ -108,7 +108,7 @@ func TestAgent_Run_TextResponse(t *testing.T) {
 	}
 }
 
-// TestAgent_Run_WithToolCall verifies Run handles tool calls through the agent.
+// TestAgent_Run_WithToolCall 测试 Run 通过 agent 处理工具调用。
 func TestAgent_Run_WithToolCall(t *testing.T) {
 	callCount := 0
 	mockClient := &streamingMockBambooClient{
@@ -152,7 +152,7 @@ func TestAgent_Run_WithToolCall(t *testing.T) {
 	}
 }
 
-// TestAgent_Stream verifies Stream emits events correctly.
+// TestAgent_Stream 测试 Stream 正确发出事件。
 func TestAgent_Stream(t *testing.T) {
 	mockClient := &streamingMockBambooClient{
 		chatFunc: func(_ context.Context, _ []bamboo.BambooMessage, _ string, _ *bamboo.RequestConfig) (<-chan bamboo.StreamEvent, error) {
@@ -196,7 +196,7 @@ func TestAgent_Stream(t *testing.T) {
 	}
 }
 
-// TestAgent_Stream_WithError verifies Stream emits error event on failure.
+// TestAgent_Stream_WithError 测试 Stream 在失败时发出错误事件。
 func TestAgent_Stream_WithError(t *testing.T) {
 	mockClient := &streamingMockBambooClient{
 		chatFunc: func(_ context.Context, _ []bamboo.BambooMessage, _ string, _ *bamboo.RequestConfig) (<-chan bamboo.StreamEvent, error) {
@@ -226,7 +226,7 @@ func TestAgent_Stream_WithError(t *testing.T) {
 	}
 }
 
-// TestAgent_RunWithMessages verifies RunWithMessages with pre-loaded messages.
+// TestAgent_RunWithMessages 测试 RunWithMessages 使用预加载的消息。
 func TestAgent_RunWithMessages(t *testing.T) {
 	var capturedMessages []bamboo.BambooMessage
 	mockClient := &streamingMockBambooClient{
@@ -264,7 +264,7 @@ func TestAgent_RunWithMessages(t *testing.T) {
 	}
 }
 
-// TestAgent_RunWithMessages_EmptyHistory verifies RunWithMessages with no user messages.
+// TestAgent_RunWithMessages_EmptyHistory 测试 RunWithMessages 没有用户消息时的行为。
 func TestAgent_RunWithMessages_EmptyHistory(t *testing.T) {
 	mockClient := &mockBambooClient{}
 
@@ -285,7 +285,7 @@ func TestAgent_RunWithMessages_EmptyHistory(t *testing.T) {
 	}
 }
 
-// TestAgent_AddTool_Duplicate verifies duplicate tool registration returns error.
+// TestAgent_AddTool_Duplicate 测试重复工具注册返回错误。
 func TestAgent_AddTool_Duplicate(t *testing.T) {
 	mockClient := &mockBambooClient{}
 	agent := NewAgent(mockClient, DefaultConfig())
@@ -304,7 +304,7 @@ func TestAgent_AddTool_Duplicate(t *testing.T) {
 	}
 }
 
-// TestAgent_Run_UsesSystemPrompt verifies the system prompt is passed through.
+// TestAgent_Run_UsesSystemPrompt 测试系统提示词被正确传递。
 func TestAgent_Run_UsesSystemPrompt(t *testing.T) {
 	var capturedSystem string
 	mockClient := &streamingMockBambooClient{
@@ -333,7 +333,7 @@ func TestAgent_Run_UsesSystemPrompt(t *testing.T) {
 	}
 }
 
-// TestAgent_Run_WithCustomStrategy verifies a custom LoopStrategy is used.
+// TestAgent_Run_WithCustomStrategy 测试使用自定义 LoopStrategy。
 func TestAgent_Run_WithCustomStrategy(t *testing.T) {
 	mockClient := &mockBambooClient{}
 
@@ -358,7 +358,7 @@ func TestAgent_Run_WithCustomStrategy(t *testing.T) {
 	}
 }
 
-// customTestStrategy is a test double for LoopStrategy.
+// customTestStrategy 是 LoopStrategy 的测试替身。
 type customTestStrategy struct {
 	called         bool
 	capturedInput  string
@@ -376,5 +376,5 @@ func (s *customTestStrategy) Execute(_ context.Context, core *agentCore, input s
 	}, nil
 }
 
-// Ensure unused imports are satisfied (json.RawMessage used by mockTool).
+// 确保未使用的导入被满足（json.RawMessage 被 mockTool 使用）。
 var _ json.RawMessage

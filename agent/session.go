@@ -7,7 +7,8 @@ import (
 	"github.com/bamboo-services/bamboo-agent/tool"
 )
 
-// Session 管理内存中的对话历史 📝
+// Session 管理内存中的对话历史
+//
 // 提供线程安全的消息追加、获取和清空功能
 type Session struct {
 	mu       sync.RWMutex

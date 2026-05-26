@@ -8,7 +8,7 @@ import (
 	bamboo "github.com/bamboo-services/bamboo-messages/bamboo"
 )
 
-// mockBambooClient 用于测试的 BambooClient 模拟实现
+// mockBambooClient 是用于测试的 BambooClient 模拟实现。
 type mockBambooClient struct {
 	completeFunc func(ctx context.Context, messages []bamboo.BambooMessage, system string, config *bamboo.RequestConfig) (*bamboo.Response, error)
 }
@@ -28,7 +28,7 @@ func (m *mockBambooClient) Complete(ctx context.Context, messages []bamboo.Bambo
 	}, nil
 }
 
-// buildMessages 构建指定数量的交替对话消息（user + assistant 成对）
+// buildMessages 构建指定数量的交替对话消息（user + assistant 成对）。
 func buildMessages(count int) []bamboo.BambooMessage {
 	messages := make([]bamboo.BambooMessage, 0, count)
 	for i := range count {

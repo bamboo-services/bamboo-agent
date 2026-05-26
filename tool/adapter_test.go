@@ -7,6 +7,7 @@ import (
 	bamboo "github.com/bamboo-services/bamboo-messages/bamboo"
 )
 
+// TestBambooAdapter_ToBambooTool 测试单个工具转换为 Bamboo 格式。
 func TestBambooAdapter_ToBambooTool(t *testing.T) {
 	adapter := NewBambooAdapter()
 
@@ -117,6 +118,7 @@ func TestBambooAdapter_ToBambooTool(t *testing.T) {
 	}
 }
 
+// TestBambooAdapter_ToBambooTools 测试多个工具批量转换为 Bamboo 格式。
 func TestBambooAdapter_ToBambooTools(t *testing.T) {
 	adapter := NewBambooAdapter()
 
@@ -157,6 +159,7 @@ func TestBambooAdapter_ToBambooTools(t *testing.T) {
 	}
 }
 
+// TestBambooAdapter_EmptyLists 测试空列表和 nil 属性的处理。
 func TestBambooAdapter_EmptyLists(t *testing.T) {
 	adapter := NewBambooAdapter()
 
@@ -192,6 +195,7 @@ func TestBambooAdapter_EmptyLists(t *testing.T) {
 	}
 }
 
+// TestConvertInputSchema 测试 InputSchema 的转换。
 func TestConvertInputSchema(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -276,6 +280,7 @@ func TestConvertInputSchema(t *testing.T) {
 	}
 }
 
+// TestBambooAdapter_PropertyDefConversion 测试 PropertyDef 的完整转换。
 func TestBambooAdapter_PropertyDefConversion(t *testing.T) {
 	adapter := NewBambooAdapter()
 

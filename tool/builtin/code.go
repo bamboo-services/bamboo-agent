@@ -13,29 +13,35 @@ import (
 	"github.com/bamboo-services/bamboo-agent/tool"
 )
 
-// CodeExecTool executes code snippets in supported languages.
+// CodeExecTool 在支持的语言中执行代码片段。
+//
+// 支持的语言包括 Go 和 Python，每种语言都使用安全的临时目录执行。
+// 可以指定超时时间，默认为 30 秒。
 type CodeExecTool struct{}
 
-// Info returns the tool metadata.
+// Info 返回工具的元数据信息。
+//
+// 返回：
+//   - tool.ToolInfo - 包含工具名称、描述、参数schema等信息
 func (c *CodeExecTool) Info() tool.ToolInfo {
 	return tool.ToolInfo{
 		Name:        "code_exec",
-		Description: "Execute code snippets in Go or Python",
+		Description: "在支持的语言中执行代码片段（Go 或 Python）",
 		Parameters: tool.InputSchema{
 			Type: "object",
 			Properties: map[string]tool.PropertyDef{
 				"language": {
 					Type:        "string",
-					Description: "Programming language: go, python",
+					Description: "编程语言：go 或 python",
 					Enum:        []string{"go", "python"},
 				},
 				"code": {
 					Type:        "string",
-					Description: "The code to execute",
+					Description: "要执行的代码",
 				},
 				"timeout": {
 					Type:        "number",
-					Description: "Timeout in seconds (default: 30)",
+					Description: "超时时间（秒），默认为 30",
 				},
 			},
 			Required: []string{"language", "code"},
@@ -43,7 +49,18 @@ func (c *CodeExecTool) Info() tool.ToolInfo {
 	}
 }
 
-// Execute runs the code snippet.
+// Execute 运行代码片段。
+//
+// 根据指定的语言调用相应的执行器，支持超时控制。
+// 执行失败时返回错误信息，执行成功时返回标准输出。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - input - JSON 格式的输入参数，包含 language、code 和可选的 timeout
+//
+// 返回：
+//   - *tool.ToolResult - 执行结果，包含输出内容或错误信息
+//   - error - 执行错误（仅内部错误，执行失败通过 ToolResult.IsError 标识）
 func (c *CodeExecTool) Execute(ctx context.Context, input json.RawMessage) (*tool.ToolResult, error) {
 	var params struct {
 		Language string  `json:"language"`
@@ -75,6 +92,18 @@ func (c *CodeExecTool) Execute(ctx context.Context, input json.RawMessage) (*too
 	}
 }
 
+// execGo 在临时目录中执行 Go 代码。
+//
+// 将代码写入临时文件并使用 `go run` 执行。
+// 执行后自动清理临时目录。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - code - 要执行的 Go 代码
+//
+// 返回：
+//   - *tool.ToolResult - 执行结果，包含标准输出或错误信息
+//   - error - 内部错误（如创建临时目录失败）
 func (c *CodeExecTool) execGo(ctx context.Context, code string) (*tool.ToolResult, error) {
 	tmpDir, err := os.MkdirTemp("", "bamboo-code-*")
 	if err != nil {
@@ -105,6 +134,18 @@ func (c *CodeExecTool) execGo(ctx context.Context, code string) (*tool.ToolResul
 	return &tool.ToolResult{Content: output, IsError: false}, nil
 }
 
+// execPython 在临时目录中执行 Python 代码。
+//
+// 将代码写入临时文件并使用 `python3` 执行。
+// 执行后自动清理临时目录。
+//
+// 参数说明：
+//   - ctx - 上下文，用于取消和超时控制
+//   - code - 要执行的 Python 代码
+//
+// 返回：
+//   - *tool.ToolResult - 执行结果，包含标准输出或错误信息
+//   - error - 内部错误（如创建临时目录失败）
 func (c *CodeExecTool) execPython(ctx context.Context, code string) (*tool.ToolResult, error) {
 	tmpDir, err := os.MkdirTemp("", "bamboo-code-*")
 	if err != nil {
